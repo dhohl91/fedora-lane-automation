@@ -1,6 +1,6 @@
 ---
 - name: Provide a staging environment for Cameron's developers
-  hosts: all
+  hosts: "{{ staging_target | default('all') }}"
   become: true
   vars_files:
     - vars/staging.yml
