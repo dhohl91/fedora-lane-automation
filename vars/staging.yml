@@ -4,3 +4,4 @@ staging_user: dev-anna
 staging_packages:
   - git
   - vim
+  - tree
