@@ -1,0 +1,6 @@
+---
+# Change these values to change the staging environment.
+staging_user: dev-anna
+staging_packages:
+  - git
+  - vim

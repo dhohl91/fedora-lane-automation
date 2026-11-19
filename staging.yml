@@ -1,0 +1,41 @@
+---
+- name: Provide a staging environment for Cameron's developers
+  hosts: all
+  become: true
+  vars_files:
+    - vars/staging.yml
+
+  tasks:
+    - name: Install the packages the staging environment needs
+      ansible.builtin.dnf:
+        name: "{{ staging_packages }}"
+        state: present
+
+    - name: Create the staging team group
+      ansible.builtin.group:
+        name: staging-devs
+        state: present
+
+    - name: Create the staging user for the requesting developer
+      ansible.builtin.user:
+        name: "{{ staging_user }}"
+        groups: staging-devs
+        append: true
+        state: present
+
+    - name: Create the application directory
+      ansible.builtin.file:
+        path: /opt/staging
+        state: directory
+        owner: "{{ staging_user }}"
+        group: staging-devs
+        mode: "0775"
+
+    - name: Show who this environment belongs to at login
+      ansible.builtin.copy:
+        dest: /etc/motd
+        content: |
+          Fedora Lane staging environment
+          Owner: {{ staging_user }}
+          Managed by Ansible Automation Platform. Manual changes will be overwritten.
+        mode: "0644"
