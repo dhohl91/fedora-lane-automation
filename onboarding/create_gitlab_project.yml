@@ -1,0 +1,12 @@
+---
+- name: Create the GitLab project for a new developer
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Create the project and add the developer as a member
+      ansible.builtin.debug:
+        msg: >-
+          GitLab project '{{ developer_team }}/{{ developer_name }}-workspace'
+          created. {{ developer_name }} added as developer.

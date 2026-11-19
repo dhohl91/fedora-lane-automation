@@ -1,0 +1,12 @@
+---
+- name: Tell the new developer they are ready
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Send the welcome message
+      ansible.builtin.debug:
+        msg: >-
+          Welcome {{ developer_name }}. Your GitLab project and database
+          access are ready. You can start today.

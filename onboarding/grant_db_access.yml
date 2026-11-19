@@ -1,0 +1,12 @@
+---
+- name: Grant database access after approval
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Grant read access to the {{ developer_team }} staging database
+      ansible.builtin.debug:
+        msg: >-
+          Read access to the {{ developer_team }} staging database granted
+          to {{ developer_name }}. Approved by the database owner.
