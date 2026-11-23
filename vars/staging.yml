@@ -6,3 +6,4 @@ staging_packages:
   - vim
   - tree
   - zip
+  - wget
