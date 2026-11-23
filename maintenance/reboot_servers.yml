@@ -1,0 +1,37 @@
+---
+- name: Reboot the demo servers and wait for SSH
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    aws_region: us-east-2
+    server_names:
+      - aws-rhel9
+      - aws-rhel10
+
+  tasks:
+    - name: Reboot the servers (keeps their IP addresses)
+      amazon.aws.ec2_instance:
+        region: "{{ aws_region }}"
+        state: rebooted
+        filters:
+          "tag:Name": "{{ server_names }}"
+          instance-state-name: running
+
+    - name: Look up the servers' public IP addresses
+      amazon.aws.ec2_instance_info:
+        region: "{{ aws_region }}"
+        filters:
+          "tag:Name": "{{ server_names }}"
+          instance-state-name: running
+      register: servers
+
+    - name: Wait until SSH answers on each server
+      ansible.builtin.wait_for:
+        host: "{{ item.public_ip_address }}"
+        port: 22
+        delay: 30
+        timeout: 300
+      loop: "{{ servers.instances }}"
+      loop_control:
+        label: "{{ item.tags.Name }} ({{ item.public_ip_address }})"
