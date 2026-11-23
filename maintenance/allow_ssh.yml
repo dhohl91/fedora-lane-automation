@@ -1,0 +1,35 @@
+---
+- name: Check and fix SSH access to the demo servers
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    aws_region: us-east-2
+    sg_name: aws-test-sg
+
+  tasks:
+    - name: Read the security group
+      amazon.aws.ec2_security_group_info:
+        region: "{{ aws_region }}"
+        filters:
+          group-name: "{{ sg_name }}"
+      register: sg_info
+
+    - name: Show the current inbound rules
+      ansible.builtin.debug:
+        var: sg_info.security_groups[0].ip_permissions
+
+    - name: Allow SSH from anywhere (demo sandbox only)
+      amazon.aws.ec2_security_group:
+        region: "{{ aws_region }}"
+        name: "{{ sg_name }}"
+        description: "{{ sg_info.security_groups[0].description }}"
+        vpc_id: "{{ sg_info.security_groups[0].vpc_id }}"
+        purge_rules: false
+        purge_rules_egress: false
+        rules:
+          - proto: tcp
+            ports:
+              - 22
+            cidr_ip: 0.0.0.0/0
+            rule_desc: SSH for the AAP demo
