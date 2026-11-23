@@ -1,0 +1,40 @@
+---
+- name: Find out where SSH is blocked
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    aws_region: us-east-2
+
+  tasks:
+    - name: "Test 1: can AAP reach any server on port 22? (GitHub)"
+      ansible.builtin.wait_for:
+        host: github.com
+        port: 22
+        timeout: 10
+      ignore_errors: true
+
+    - name: "Test 2: can AAP reach aws-rhel9 on port 22?"
+      ansible.builtin.wait_for:
+        host: 3.16.152.166
+        port: 22
+        timeout: 10
+      ignore_errors: true
+
+    - name: Read the security groups called aws-test-sg
+      amazon.aws.ec2_security_group_info:
+        region: "{{ aws_region }}"
+        filters:
+          group-name: aws-test-sg
+      register: sgs
+
+    - name: "Test 3: which security groups exist and do they allow port 22?"
+      ansible.builtin.debug:
+        msg: >-
+          {{ item.group_id }} in {{ item.vpc_id }}:
+          {{ item.ip_permissions | selectattr('from_port', 'defined')
+             | selectattr('from_port', 'equalto', 22)
+             | map(attribute='ip_ranges') | list }}
+      loop: "{{ sgs.security_groups }}"
+      loop_control:
+        label: "{{ item.group_id }}"
