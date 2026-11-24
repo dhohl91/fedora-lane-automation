@@ -8,4 +8,3 @@ staging_packages:
   - zip
   - wget
   - unzip
-  - ig
