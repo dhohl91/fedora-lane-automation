@@ -8,3 +8,4 @@ staging_packages:
   - zip
   - wget
   - unzip
+  - curl
