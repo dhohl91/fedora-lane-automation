@@ -7,4 +7,3 @@ staging_packages:
   - tree
   - zip
   - wget
-  - unzip
