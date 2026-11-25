@@ -10,3 +10,5 @@ staging_packages:
   - unzip
   - curl
   - jq
+  - tmux
+  - bc
