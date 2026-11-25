@@ -9,3 +9,4 @@ staging_packages:
   - wget
   - unzip
   - curl
+  - jq
