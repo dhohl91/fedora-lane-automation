@@ -12,3 +12,5 @@ staging_packages:
   - jq
   - tmux
   - bc
+  - strace
+  - traceroute
